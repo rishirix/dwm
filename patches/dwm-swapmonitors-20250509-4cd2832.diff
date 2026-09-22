@@ -1,0 +1,76 @@
+From 4cd2832206eca48190463ac2d3e5ba4e1410c517 Mon Sep 17 00:00:00 2001
+From: jameel-sawafta <jameelhsawafta@gmail.com>
+Date: Fri, 9 May 2025 22:47:04 +0300
+Subject: [PATCH] dwm: add swapmon function to swap monitors
+
+---
+ config.def.h |  1 +
+ dwm.c        | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 9efa774..7c229cc 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -85,6 +85,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++        { MODKEY|ShiftMask,             XK_apostrophe,  swapmon,   {0} },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff --git a/dwm.c b/dwm.c
+index 1443802..adfe8bd 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -232,6 +232,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
+ static int xerrordummy(Display *dpy, XErrorEvent *ee);
+ static int xerrorstart(Display *dpy, XErrorEvent *ee);
+ static void zoom(const Arg *arg);
++static void swapmon(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2139,6 +2140,38 @@ zoom(const Arg *arg)
+ 	pop(c);
+ }
+ 
++void
++swapmon(const Arg *arg)
++{
++    if (mons->next == NULL)
++        return;
++
++    Monitor *m1 = mons;
++    Monitor *m2 = mons->next;
++
++    unsigned int tmp = m1->tagset[m1->seltags];
++    m1->tagset[m1->seltags] = m2->tagset[m2->seltags];
++    m2->tagset[m2->seltags] = tmp;
++
++    Client *c;
++    for (c = m1->clients; c; c = c->next)
++        c->mon = m2;
++    for (c = m2->clients; c; c = c->next)
++        c->mon = m1;
++
++    Client *tmp_clients = m1->clients;
++    m1->clients = m2->clients;
++    m2->clients = tmp_clients;
++
++    Client *tmp_stack = m1->stack;
++    m1->stack = m2->stack;
++    m2->stack = tmp_stack;
++
++    focus(NULL);
++    arrange(m1);
++    arrange(m2);
++}
++
+ int
+ main(int argc, char *argv[])
+ {
+-- 
+2.49.0
+

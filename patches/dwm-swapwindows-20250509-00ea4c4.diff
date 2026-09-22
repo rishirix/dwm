@@ -1,0 +1,90 @@
+From 00ea4c4e2d221c7f2979bcf403e4c23abf4b3f79 Mon Sep 17 00:00:00 2001
+From: jameel-sawafta <jameelhsawafta@gmail.com>
+Date: Fri, 9 May 2025 22:51:56 +0300
+Subject: [PATCH] dwm: add swapwindow function to swap focused clients between
+ monitors
+
+---
+ config.def.h |  1 +
+ dwm.c        | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 9efa774..ec0a706 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -85,6 +85,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++        { MODKEY|ShiftMask,             XK_slash,  swapwindow,     {0} },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff --git a/dwm.c b/dwm.c
+index 1443802..ee7658f 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -232,6 +232,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
+ static int xerrordummy(Display *dpy, XErrorEvent *ee);
+ static int xerrorstart(Display *dpy, XErrorEvent *ee);
+ static void zoom(const Arg *arg);
++static void swapwindow(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2139,6 +2140,51 @@ zoom(const Arg *arg)
+ 	pop(c);
+ }
+ 
++void
++swapwindow(const Arg *arg)
++{
++    if (!selmon || !selmon->sel || !mons->next)
++        return;
++
++    Monitor *m1 = selmon;
++    Monitor *m2 = dirtomon(+1);
++
++    Client *c1 = m1->sel;
++    Client *c2 = m2->sel;
++
++    if (!c2) {
++        detach(c1);
++        detachstack(c1);
++        c1->mon = m2;
++        attach(c1);
++        attachstack(c1);
++        focus(c1);
++        selmon = m2;
++        arrange(m1);
++        arrange(m2);
++        return;
++    }
++
++    detach(c1);
++    detachstack(c1);
++    detach(c2);
++    detachstack(c2);
++
++    c1->mon = m2;
++    attach(c1);
++    attachstack(c1);
++    focus(c1);
++
++    c2->mon = m1;
++    attach(c2);
++    attachstack(c2);
++    focus(c2);
++
++    selmon = m1;
++    arrange(m1);
++    arrange(m2);
++}
++
+ int
+ main(int argc, char *argv[])
+ {
+-- 
+2.49.0
+
