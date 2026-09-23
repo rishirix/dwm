@@ -58,8 +58,8 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", "monospace:size=10", "-nb", "#222222", "-nf", "#bbbbbb", "-sb", "#005577", "-sf", "#eeeeee", "-g", "1", "-l", "10", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
-static const char *brightnessup[] = {"xbacklight","-inc","10", NULL};
-static const char *brightnessdown[] = {"xbacklight","-dec","10",NULL};
+static const char *brightnessup[] = {"brightnessctl","s","10%+", NULL};
+static const char *brightnessdown[] = {"brightnessctl","s","10%-",NULL};
 static const char *mutemic[] = {"wpctl","set-mute","@DEFAULT_SOURCE@","toggle",NULL};
 static const char *play[] = {"playerctl","play-pause",NULL};
 static const char *stop[] = {"playerctl","stop",NULL};
