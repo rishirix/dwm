@@ -3,7 +3,7 @@
 
 /* appearance */
 static unsigned int borderpx   = 1;        /* border pixel of windows */
-static const unsigned int gappx = 5;
+static const unsigned int gappx = 10;
 static unsigned int snap       = 32;       /* snap pixel */
 static int showbar             = 1;        /* 0 means no bar */
 static int topbar              = 1;        /* 0 means bottom bar */
@@ -56,7 +56,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", "monospace:size=10", "-nb", "#222222", "-nf", "#bbbbbb", "-sb", "#005577", "-sf", "#eeeeee", "-g", "1", "-l", "10", NULL };
+static char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", "monospace:size=10", "-nb", "#222222", "-nf", "#bbbbbb", "-sb", "#005577", "-sf", "#eeeeee", "-g", "1", "-l", "15", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *brightnessup[] = {"brightnessctl","s","10%+", NULL};
 static const char *brightnessdown[] = {"brightnessctl","s","10%-",NULL};
